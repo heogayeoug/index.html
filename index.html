@@ -245,11 +245,11 @@
         ENTP: "🔍 모든 걸 캐묻는 토론냥",
       };
 
-      resultEl.innerHTML = 당신은 <span class="mbti-type">${mbti}</span>형, ${typeNames[mbti]}!;
+      resultEl.innerHTML = `당신은 <span class="mbti-type">${mbti}</span>형, ${typeNames[mbti]}!`;
 
       //let imgsrc = mbti.toLowerCase() + ".PNG";
       let imgsrc = "https://raw.githubusercontent.com/heogayeoug/index.html/refs/heads/main/" + mbti.toLowerCase() + ".png";
-      let mbtiimg = <img src='${imgsrc}' alt='${mbti} 고양이'>;
+      let mbtiimg = `<img src='${imgsrc}' alt='${mbti} 고양이'>`;
       
       document.getElementById("result-photo").innerHTML = mbtiimg;
     }
