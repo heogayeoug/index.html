@@ -1,305 +1,137 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mbti캣테스트</title>
-  <!-- 귀엽고 둥근 웹폰트 추가 -->
-  <link href="https://cdn.jsdelivr.net/gh/webfontworld/cafe24/Cafe24Ssurround.css" rel="stylesheet" />
-  <style>
+<style>
+  body {
+    font-family: 'Pretendard', sans-serif;
+    background-color: #fff0f5;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+  @media (prefers-color-scheme: dark) {
     body {
-      /* font-family: 'Pretendard', sans-serif; */
-      background-color: #fff0f5;
-      color: #333;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 2rem;
-      transition: background-color 0.3s, color 0.3s;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      body {
-        background-color: #1e1e1e;
-        color: #f0f0f0;
-      }
-
-      .question-box {
-        background: #2b2b2b;
-        border-color: #ff69b4;
-      }
-
-      .answers button {
-        background-color: #ffb6c1;
-        color: #000;
-      }
-
-      .answers button:hover {
-        background-color: #ff69b4;
-      }
-    }
-
-    h1 {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-
-    .headline {
-      color: hotpink;
-      font-size: 2.5rem;
-      font-weight: 800;
-      font-family: 'Cafe24Ssurround', 'Pretendard', sans-serif;
+      background-color: #1e1e1e;
+      color: #ffffff; /* ✅ 글자 밝게 */
     }
 
     .question-box {
-      background: #ffeef5;
-      border: 2px solid #d36ba6;
-      border-radius: 16px;
-      padding: 2rem;
-      max-width: 600px;
-      width: 100%;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      margin-bottom: 2rem;
-      text-align: center;
-    }
-
-    .question {
-      font-size: 1.2rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .answers {
-      display: flex;
-      justify-content: center;
-      gap: 1.5rem;
-      flex-wrap: wrap;
+      background: #2b2b2b;
+      border-color: #ff69b4;
+      color: #ffffff; /* ✅ 질문 텍스트 밝게 */
     }
 
     .answers button {
-      padding: 0.8rem 2rem;
-      border: none;
-      border-radius: 12px;
-      background-color: #f8c8dc;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background-color 0.3s;
+      background-color: #ffb6c1;
+      color: #000000;
     }
 
     .answers button:hover {
-      background-color: #f4a6c1;
-    }
-
-    #result {
-      font-size: 1.4rem;
-      color: #333;
-      margin-top: 2rem;
-      text-align: center;
-    }
-
-    #result-photo {
-      margin-top: 2rem;
-      border: 5px solid hotpink;
-      border-radius: 12px;
-      display: inline-block;
-    }
-
-    #result-photo img {
-      width: 100%;
-      max-width: 1000px;
-    }
-
-    .mbti-type {
-      color: hotpink;
-      font-size: 2rem;
-      font-weight: bold;
-    }
-
-    .share-buttons {
-      margin-top: 2rem;
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .share-buttons button {
-      background-color: #ffb6c1;
-      border: none;
-      padding: 0.7rem 1.5rem;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 1rem;
-      transition: background-color 0.3s;
-    }
-
-    .share-buttons button:hover {
       background-color: #ff69b4;
       color: white;
     }
-  </style>
-</head>
-<body>
-  <h1>
-    <span class="headline">MBTI 캣 테스트!</span><br />
-    나랑 닮은 고양이 성격은?
-  </h1>
 
-  <div class="question-box" id="question-box">
-    <div class="question" id="question">로딩 중...</div>
-    <div class="answers">
-      <button onclick="answer('yes')">예</button>
-      <button onclick="answer('no')">아니오</button>
-    </div>
-  </div>
-
-  <div id="result"></div>
-  <div id="result-photo"></div>
-  <div class="share-buttons" id="share-buttons" style="display:none;">
-    <button onclick="copyLink()">링크 복사</button>
-    <button onclick="shareKakao()">카카오톡 공유</button>
-  </div>
-
-  <script>
-    const questions = [
-      { q: "사람들과 어울릴 때 에너지가 충전돼요.", type: "E" },
-      { q: "혼자 있는 시간이 꼭 필요해요.", type: "I" },
-      { q: "파티보다 조용한 공간이 더 편해요.", type: "I" },
-      { q: "낯선 사람과 대화하는 게 어렵지 않아요.", type: "E" },
-      { q: "구체적인 정보나 사실이 더 신뢰돼요.", type: "S" },
-      { q: "상상하고 공상하는 걸 좋아해요.", type: "N" },
-      { q: "실용적인 것이 더 중요하다고 생각해요.", type: "S" },
-      { q: "보이지 않는 가능성에 더 끌려요.", type: "N" },
-      { q: "결정할 때 논리와 근거를 따져요.", type: "T" },
-      { q: "상대방의 감정을 먼저 생각해요.", type: "F" },
-      { q: "냉정하지만 공정하게 판단해요.", type: "T" },
-      { q: "누군가 힘들어하면 함께 공감해요.", type: "F" },
-      { q: "계획 세우는 걸 좋아해요.", type: "J" },
-      { q: "즉흥적인 게 더 재밌어요.", type: "P" },
-      { q: "정리정돈이 잘 되어 있어야 마음이 편해요.", type: "J" },
-      { q: "상황에 따라 유연하게 움직이는 편이에요.", type: "P" },
-      { q: "마감이 있어야 일이 손에 잡혀요.", type: "P" },
-      { q: "선물보단 진심이 중요하다고 생각해요.", type: "F" },
-      { q: "현재보다 미래를 더 많이 생각해요.", type: "N" },
-      { q: "지적 대화를 좋아해요.", type: "T" },
-    ];
-
-    let index = 0;
-    const scores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
-
-    const questionEl = document.getElementById("question");
-    const resultEl = document.getElementById("result");
-    const questionBox = document.getElementById("question-box");
-
-    function showQuestion() {
-      if (index >= questions.length) {
-        showResult();
-        return;
-      }
-      questionEl.textContent = questions[index].q;
+    #result {
+      color: #ffffff; /* ✅ 결과 텍스트도 밝게 */
     }
+  }
 
-    function answer(choice) {
-      const type = questions[index].type;
-      if (
-        (type === "E" || type === "S" || type === "T" || type === "J") &&
-        choice === "yes"
-      ) {
-        scores[type]++;
-      } else if (
-        (type === "I" || type === "N" || type === "F" || type === "P") &&
-        choice === "yes"
-      ) {
-        scores[type]++;
-      }
-      index++;
-      showQuestion();
-    }
+  h1 {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
 
-    function showResult() {
-      questionBox.style.display = "none";
-      document.getElementById("share-buttons").style.display = "flex";
+  .headline {
+    color: hotpink;
+    font-size: 2.5rem;
+    font-weight: 800;
+    font-family: 'Cafe24Ssurround', 'Pretendard', sans-serif;
+  }
 
-      const mbti = [
-        scores.E >= scores.I ? "E" : "I",
-        scores.S >= scores.N ? "S" : "N",
-        scores.T >= scores.F ? "T" : "F",
-        scores.J >= scores.P ? "J" : "P",
-      ].join("");
+  .question-box {
+    background: #ffeef5;
+    border: 2px solid #d36ba6;
+    border-radius: 16px;
+    padding: 2rem;
+    max-width: 600px;
+    width: 100%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+    text-align: center;
+  }
 
-      const typeNames = {
-        ISTJ: "🧹 규칙 잘 지키는 집사형 냥이",
-        ISFJ: "🛏️ 다정한 이불 속 보살냥",
-        ESTJ: "📋 냥계의 리더, 야옹대장님",
-        ESFJ: "🐾 친구 많은 사교냥 대모",
-        INFJ: "🌙 조용한 힐링 마스터냥",
-        INFP: "🎨 낭만 가득 예술냥",
-        ENFJ: "📣 동네 오지랖냥 선배",
-        ENFP: "🧭 종횡무진 호기심 대장냥",
-        ISTP: "🛠️ 고장난 장난감 해체냥",
-        ISFP: "🎧 감성충만 방구석 DJ냥",
-        ESTP: "🛴 사고는 내가 칠게냥",
-        ESFP: "🌟 관심은 나야나! 인기냥",
-        INTJ: "🧩 계획만렙 전략냥",
-        INTP: "📚 궁금냥 방구석 철학자",
-        ENTJ: "🦁 냥계 CEO, 야망냥",
-        ENTP: "🔍 모든 걸 캐묻는 토론냥",
-      };
+  .question {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+  }
 
-      resultEl.innerHTML = `당신은 <span class="mbti-type">${mbti}</span>형, ${typeNames[mbti]}!`;
+  .answers {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
 
-      //let imgsrc = mbti.toLowerCase() + ".PNG";
-      let imgsrc = "https://raw.githubusercontent.com/heogayeoug/index.html/refs/heads/main/" + mbti.toLowerCase() + ".png";
-      let mbtiimg = `<img src='${imgsrc}' alt='${mbti} 고양이'>`;
-      
-      document.getElementById("result-photo").innerHTML = mbtiimg;
-    }
+  .answers button {
+    padding: 0.8rem 2rem;
+    border: none;
+    border-radius: 12px;
+    background-color: #f8c8dc;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
 
-    function copyLink() {
-      navigator.clipboard.writeText(location.href).then(() => {
-        alert("링크가 복사되었어요!");
-      });
-    }
+  .answers button:hover {
+    background-color: #f4a6c1;
+  }
 
-    function shareKakao() {
-      const url = location.href;
-      const title = "고양이 MBTI 테스트";
-      const description = "나랑 닮은 고양이 성격은 뭘까?";
-      const imageUrl = location.origin + "/ogimage.jpg";
+  #result {
+    font-size: 1.4rem;
+    color: #333;
+    margin-top: 2rem;
+    text-align: center;
+  }
 
-      if (window.Kakao) {
-        Kakao.Share.sendDefault({
-          objectType: 'feed',
-          content: {
-            title: title,
-            description: description,
-            imageUrl: imageUrl,
-            link: {
-              mobileWebUrl: url,
-              webUrl: url,
-            },
-          },
-          buttons: [
-            {
-              title: '테스트 하러 가기',
-              link: {
-                mobileWebUrl: url,
-                webUrl: url,
-              },
-            },
-          ],
-        });
-      } else {
-        alert("카카오 SDK가 로드되지 않았습니다.");
-      }
-    }
+  #result-photo {
+    margin-top: 2rem;
+    border: 5px solid hotpink;
+    border-radius: 12px;
+    display: inline-block;
+  }
 
-    showQuestion();
-  </script>
+  #result-photo img {
+    width: 100%;
+    max-width: 1000px;
+  }
 
-  <!-- Kakao SDK -->
-  <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
-  <script>
-    Kakao.init("YOUR_APP_KEY"); // 여기에 본인의 JavaScript 키 넣기
-  </script>
-</body>
-</html>
+  .mbti-type {
+    color: hotpink;
+    font-size: 2rem;
+    font-weight: bold;
+  }
+
+  .share-buttons {
+    margin-top: 2rem;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .share-buttons button {
+    background-color: #ffb6c1;
+    border: none;
+    padding: 0.7rem 1.5rem;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+  }
+
+  .share-buttons button:hover {
+    background-color: #ff69b4;
+    color: white;
+  }
+</style>
