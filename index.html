@@ -248,7 +248,8 @@
       resultEl.innerHTML = `당신은 <span class="mbti-type">${mbti}</span>형, ${typeNames[mbti]}!`;
 
       let imgsrc = mbti.toLowerCase() + ".PNG";
-      let mbtiimg = `<img src='${imgsrc}' alt='${mbti} 고양이'>`;
+      //let mbtiimg = `<img src='${imgsrc}' alt='${mbti} 고양이'>`;
+      let imgsrc = "https://raw.githubusercontent.com/heogayeoug/index.html/refs/heads/main/" + mbti.toLowerCase() + ".png";
       document.getElementById("result-photo").innerHTML = mbtiimg;
     }
 
